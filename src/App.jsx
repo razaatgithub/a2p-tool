@@ -139,6 +139,16 @@ export default function A2PTool() {
     const uuid = generateUUID();
 
     try {
+      // Convert logo to base64 if uploaded
+      let logoBase64 = null;
+      if (logoFile) {
+        logoBase64 = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = (e) => resolve(e.target.result);
+          reader.readAsDataURL(logoFile);
+        });
+      }
+
       const response = await fetch("https://shabbirraza-n8n.hf.space/webhook/a2p-generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -151,6 +161,7 @@ export default function A2PTool() {
           businessEmail: form.businessEmail,
           businessPhone: form.businessPhone,
           businessDescription: form.businessDescription,
+          logoBase64,
           uuid
         })
       });
