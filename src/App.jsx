@@ -362,6 +362,16 @@ export default function A2PTool() {
 
 
 
+              {/* Business Website */}
+              <div style={fieldStyle}>
+                <label style={labelStyle}>Business Website URL <span style={{fontSize:11,color:'#10b981',fontWeight:600}}>✨ Auto-scrapes logo + content</span></label>
+                <input style={inputStyle("businessWebsite")} placeholder="https://www.naplescleaning.com"
+                  value={form.businessWebsite} onChange={e => update("businessWebsite", e.target.value)} />
+                <div style={{ color: "#475569", fontSize: 12, marginTop: 6 }}>
+                  We'll extract your logo and content automatically. Leave blank if no website.
+                </div>
+              </div>
+
               {/* Logo Upload */}
               <div style={fieldStyle}>
                 <label style={labelStyle}>Client Logo <span style={{fontSize:11,color:'#475569',fontWeight:400}}>(optional — auto-generated if not uploaded)</span></label>
