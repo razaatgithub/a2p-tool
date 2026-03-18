@@ -72,6 +72,7 @@ export default function A2PTool() {
     agencyName: "", agencyEmail: "",
     businessName: "", businessAddress: "", businessEmail: "",
     businessPhone: "", businessType: "", businessDescription: "",
+    hasWebsite: null,
     businessWebsite: "",
     agreed: false
   });
@@ -95,8 +96,9 @@ export default function A2PTool() {
     if (!form.businessName.trim()) e.businessName = "Required";
     if (!form.businessAddress.trim()) e.businessAddress = "Required";
     if (!form.businessEmail.trim() || !form.businessEmail.includes("@")) e.businessEmail = "Valid email required";
-    if (!form.businessType) e.businessType = "Required";
-    if (!form.businessDescription.trim()) e.businessDescription = "Required";
+    if (form.hasWebsite === null) e.hasWebsite = "Please select yes or no";
+    if (form.hasWebsite === false && !form.businessType) e.businessType = "Required";
+    if (form.hasWebsite === false && !form.businessDescription.trim()) e.businessDescription = "Required";
     if (!form.agreed) e.agreed = "You must confirm compliance";
     setErrors(e);
     return Object.keys(e).length === 0;
@@ -303,15 +305,52 @@ export default function A2PTool() {
                 </div>
               </div>
 
+              {/* Does business have a website? */}
               <div style={fieldStyle}>
-                <label style={labelStyle}>Business Type *</label>
-                <select style={{ ...inputStyle("businessType"), cursor: "pointer" }}
-                  value={form.businessType} onChange={e => update("businessType", e.target.value)}>
-                  <option value="">Select industry...</option>
-                  {businessTypes.map(t => <option key={t} value={t}>{t}</option>)}
-                </select>
-                {errors.businessType && <div style={errorStyle}>{errors.businessType}</div>}
+                <label style={labelStyle}>Does this business have a website? *</label>
+                <div style={{ display: "flex", gap: 12, marginTop: 8 }}>
+                  {["Yes", "No"].map(opt => (
+                    <button key={opt} type="button" onClick={() => update("hasWebsite", opt === "Yes")}
+                      style={{
+                        flex: 1, padding: "12px", borderRadius: 10, cursor: "pointer",
+                        fontFamily: "inherit", fontSize: 14, fontWeight: 600, transition: "all 0.2s",
+                        background: form.hasWebsite === (opt === "Yes") ? "#6366f1" : "#0f172a",
+                        color: form.hasWebsite === (opt === "Yes") ? "#fff" : "#64748b",
+                        border: `1.5px solid ${form.hasWebsite === (opt === "Yes") ? "#6366f1" : "#1e293b"}`,
+                      }}>
+                      {opt === "Yes" ? "✅ Yes, they have a website" : "❌ No website"}
+                    </button>
+                  ))}
+                </div>
+                {errors.hasWebsite && <div style={errorStyle}>{errors.hasWebsite}</div>}
               </div>
+
+              {/* If YES: show website field */}
+              {form.hasWebsite === true && (
+                <div style={fieldStyle}>
+                  <label style={labelStyle}>Business Website URL <span style={{fontSize:11,color:'#10b981',fontWeight:600}}>✨ Auto-scrapes logo + content</span></label>
+                  <input style={inputStyle("businessWebsite")} placeholder="https://www.naplescleaning.com"
+                    value={form.businessWebsite} onChange={e => update("businessWebsite", e.target.value)} />
+                  <div style={{ color: "#475569", fontSize: 12, marginTop: 6 }}>
+                    We'll automatically extract logo, services, and description from their website.
+                  </div>
+                </div>
+              )}
+
+              {/* If NO: show business type + description */}
+              {form.hasWebsite === false && (
+                <>
+                  <div style={fieldStyle}>
+                    <label style={labelStyle}>Business Type *</label>
+                    <select style={{ ...inputStyle("businessType"), cursor: "pointer" }}
+                      value={form.businessType} onChange={e => update("businessType", e.target.value)}>
+                      <option value="">Select industry...</option>
+                      {businessTypes.map(t => <option key={t} value={t}>{t}</option>)}
+                    </select>
+                    {errors.businessType && <div style={errorStyle}>{errors.businessType}</div>}
+                  </div>
+                </>
+              )}
 
               <div style={fieldStyle}>
                 <label style={labelStyle}>Client Business Address *</label>
