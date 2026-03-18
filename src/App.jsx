@@ -374,28 +374,6 @@ export default function A2PTool() {
                 </div>
               </div>
 
-              <div style={fieldStyle}>
-                <label style={labelStyle}>Business Description (1-2 sentences) *</label>
-                <textarea style={{ ...inputStyle("businessDescription"), minHeight: 90, resize: "vertical" }}
-                  placeholder="e.g. We are a local home services company helping residential customers in Naples, FL with reliable, professional cleaning services."
-                  value={form.businessDescription} onChange={e => update("businessDescription", e.target.value)} />
-                {errors.businessDescription && <div style={errorStyle}>{errors.businessDescription}</div>}
-                <div style={{ color: "#475569", fontSize: 12, marginTop: 6 }}>
-                  This is used to build your client's compliance website and generate all campaign copy.
-                </div>
-              </div>
-
-
-
-              {/* Business Website */}
-              <div style={fieldStyle}>
-                <label style={labelStyle}>Business Website URL <span style={{fontSize:11,color:'#10b981',fontWeight:600}}>✨ Auto-scrapes logo + content</span></label>
-                <input style={inputStyle("businessWebsite")} placeholder="https://www.naplescleaning.com"
-                  value={form.businessWebsite} onChange={e => update("businessWebsite", e.target.value)} />
-                <div style={{ color: "#475569", fontSize: 12, marginTop: 6 }}>
-                  We'll extract your logo and content automatically. Leave blank if no website.
-                </div>
-              </div>
 
 
               {/* Compliance checkbox */}
