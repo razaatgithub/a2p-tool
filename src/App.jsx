@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const STEPS = ["agency", "business", "generating", "results"];
 
@@ -72,12 +72,17 @@ export default function A2PTool() {
     agencyName: "", agencyEmail: "",
     businessName: "", businessAddress: "", businessEmail: "",
     businessPhone: "", businessType: "", businessDescription: "",
+    businessWebsite: "",
     agreed: false
   });
+  const [logoFile, setLogoFile] = useState(null);
+  const [logoPreview, setLogoPreview] = useState(null);
   const [results, setResults] = useState(null);
   const [progress, setProgress] = useState(0);
   const [progressLabel, setProgressLabel] = useState("Initializing...");
   const [errors, setErrors] = useState({});
+
+  const fileRef = useRef();
 
   const update = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
@@ -99,6 +104,15 @@ export default function A2PTool() {
     if (!form.agreed) e.agreed = "You must confirm compliance";
     setErrors(e);
     return Object.keys(e).length === 0;
+  };
+
+  const handleLogoChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setLogoFile(file);
+    const reader = new FileReader();
+    reader.onload = (ev) => setLogoPreview(ev.target.result);
+    reader.readAsDataURL(file);
   };
 
   const generateAssets = async () => {
@@ -139,6 +153,8 @@ export default function A2PTool() {
           businessEmail: form.businessEmail,
           businessPhone: form.businessPhone,
           businessDescription: form.businessDescription,
+          businessWebsite: form.businessWebsite || null,
+          logoBase64: logoPreview || null,
           uuid
         })
       });
@@ -345,6 +361,25 @@ export default function A2PTool() {
               </div>
 
 
+
+              {/* Logo Upload */}
+              <div style={fieldStyle}>
+                <label style={labelStyle}>Client Logo <span style={{fontSize:11,color:'#475569',fontWeight:400}}>(optional — auto-generated if not uploaded)</span></label>
+                <div onClick={() => fileRef.current.click()} style={{
+                  border: "2px dashed #1e293b", borderRadius: 10, padding: 20,
+                  textAlign: "center", cursor: "pointer"
+                }}>
+                  {logoPreview ? (
+                    <img src={logoPreview} alt="logo" style={{ maxHeight: 70, maxWidth: 180, objectFit: "contain" }} />
+                  ) : (
+                    <>
+                      <div style={{ fontSize: 24, marginBottom: 6 }}>⬆️</div>
+                      <div style={{ color: "#64748b", fontSize: 13 }}>Click to upload logo (max 400px)</div>
+                    </>
+                  )}
+                </div>
+                <input ref={fileRef} type="file" accept="image/*" style={{ display: "none" }} onChange={handleLogoChange} />
+              </div>
 
               {/* Compliance checkbox */}
               <div style={{
